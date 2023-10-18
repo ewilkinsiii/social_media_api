@@ -2,9 +2,13 @@ source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby "3.0.3"
-
 gem "rails", "~> 7.0.6"
-gem "pg", "~> 1.1"
+
+gem 'active_storage_base64', '~> 2.0.0'
+gem 'activerecord-cockroachdb-adapter', '~> 7.0', '>= 7.0.3'
+gem 'jbuilder', '~> 2.10'
+gem 'lograge', '~> 0.13'
+gem 'oj', '~> 3.16' 
 gem "puma", "~> 5.0"
 
 
