@@ -1,6 +1,6 @@
 class UserRating < ApplicationRecord
   belongs_to :user
-  belongs_to :user, class_name: 'User', foreign_key: 'rater_id', dependent: :destroy
+  belongs_to :user, class_name: 'User', foreign_key: 'user_id', dependent: :destroy
 
   validates :rating, presence: true,
                      numericality: { only_integer: true, greater_than_or_equal_to: 1, less_than_or_equal_to: 5 }

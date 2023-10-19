@@ -9,4 +9,6 @@ class User < ActiveRecord::Base
   include DeviseTokenAuth::Concerns::User
   has_many :posts, dependent: :destroy
   has_many :comments, dependent: :destroy
+  has_many :user_ratings, dependent: :destroy
+  has_many :rater, through: :user_ratings, dependent: :destroy, source: :user
 end
