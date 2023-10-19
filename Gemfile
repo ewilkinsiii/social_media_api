@@ -14,6 +14,7 @@ gem 'lograge', '~> 0.13'
 gem 'oj', '~> 3.16' 
 gem "puma", "~> 5.0"
 gem 'rack-cors', '~> 2.0'
+gem 'sidekiq', '~> 7.1', '>= 7.1.6'
 
 
 
