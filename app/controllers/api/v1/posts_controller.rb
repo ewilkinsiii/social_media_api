@@ -4,8 +4,8 @@ module Api
       before_action :set_post, only: %i[show update destroy]
 
       def index
-        @posts = Post.all
-        render json: @posts, include: :user
+        @posts = Post.page(params[:page]).per(params[:per_page])
+        render json: @posts, meta: pagination_dict(@posts), each_serializer: PostSerializer, include: :user
       end
 
       def show
@@ -42,6 +42,14 @@ module Api
 
       def post_params
         params.require(:post).permit(:title, :body, :user_id)
+      end
+
+      def pagination_dict(collection)
+        {
+          current_page: collection.current_page,
+          total_pages: collection.total_pages,
+          total_count: collection.total_count
+        }
       end
     end
   end
