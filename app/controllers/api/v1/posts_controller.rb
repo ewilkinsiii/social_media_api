@@ -17,6 +17,11 @@ module Api
 
         if @post.save
           render json: @post, status: :created
+          UserTimelineJob.perform_now(
+            @post.user_id,
+            'Created Post',
+            "Created the post #{@post.title}"
+          )
         else
           render json: @post.errors, status: :unprocessable_entity
         end
