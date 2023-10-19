@@ -14,6 +14,14 @@ module Api
         render json: { online: true }
       end
 
+      def pagination_dict(collection)
+        {
+          current_page: collection.current_page,
+          total_pages: collection.total_pages,
+          total_count: collection.total_count
+        }
+      end
+
       private
 
       def render_not_found(exception)

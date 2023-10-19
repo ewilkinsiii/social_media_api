@@ -9,14 +9,14 @@ module Api
       end
 
       def show
-        render json: @post, include: :user
+        render json: @post, include: %i[user comments]
       end
 
       def create
         @post = Post.new(post_params)
 
         if @post.save
-          render :show, status: :created, location: @post
+          render json: @post, status: :created
         else
           render json: @post.errors, status: :unprocessable_entity
         end
@@ -24,7 +24,7 @@ module Api
 
       def update
         if @post.update(post_params)
-          render :show, status: :ok, location: @post
+          render json: @post, status: :created
         else
           render json: @post.errors, status: :unprocessable_entity
         end
@@ -42,14 +42,6 @@ module Api
 
       def post_params
         params.require(:post).permit(:title, :body, :user_id)
-      end
-
-      def pagination_dict(collection)
-        {
-          current_page: collection.current_page,
-          total_pages: collection.total_pages,
-          total_count: collection.total_count
-        }
       end
     end
   end
