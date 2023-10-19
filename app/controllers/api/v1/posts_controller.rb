@@ -1,13 +1,14 @@
 module Api
   module V1
     class PostsController < Api::V1::ApiController
-      before_action :set_post, only: %i[ show update destroy ]
+      before_action :set_post, only: %i[show update destroy]
 
       def index
         @posts = Post.all
       end
 
       def show
+        render json: @post, include: :user
       end
 
       def create
@@ -33,13 +34,14 @@ module Api
       end
 
       private
-        def set_post
-          @post = Post.find(params[:id])
-        end
 
-        def post_params
-          params.require(:post).permit(:title, :body, :user_id)
-        end
+      def set_post
+        @post = Post.find(params[:id])
+      end
+
+      def post_params
+        params.require(:post).permit(:title, :body, :user_id)
+      end
     end
   end
 end
