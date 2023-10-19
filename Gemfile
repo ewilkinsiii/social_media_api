@@ -4,10 +4,12 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby "3.0.3"
 gem "rails", "~> 7.0.6"
 
+gem 'active_model_serializers', '~> 0.10.14'
 gem 'active_storage_base64', '~> 2.0.0'
 gem 'activerecord-cockroachdb-adapter', '~> 7.0', '>= 7.0.3'
 gem 'devise_token_auth', '~> 1.2.2'
 gem 'jbuilder', '~> 2.10'
+gem 'kaminari'
 gem 'lograge', '~> 0.13'
 gem 'oj', '~> 3.16' 
 gem "puma", "~> 5.0"
