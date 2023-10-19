@@ -27,8 +27,6 @@ class UserRating < ApplicationRecord
   end
 
   def create_user_timeline
-    puts '###############create_user_timeline#####################'
-    puts @current_rating
     new_rating = UserRating.average_rating(user_id)
     return unless new_rating == 5 && @current_rating < 5
 
