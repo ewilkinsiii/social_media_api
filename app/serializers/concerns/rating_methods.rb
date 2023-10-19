@@ -1,7 +1,5 @@
-module Concerns
-  module RatingMethods
-    def average_rating
-      UserRating.average_rating(object.user_id)
-    end
+module RatingMethods
+  def average_rating
+    UserRating.average_rating(object.user_id)
   end
 end

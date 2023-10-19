@@ -11,4 +11,5 @@ class User < ActiveRecord::Base
   has_many :comments, dependent: :destroy
   has_many :user_ratings, dependent: :destroy
   has_many :rater, through: :user_ratings, dependent: :destroy, source: :user
+  has_many :user_timelines
 end

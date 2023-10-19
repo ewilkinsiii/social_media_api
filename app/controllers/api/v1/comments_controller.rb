@@ -18,6 +18,11 @@ module Api
 
         if @comment.save
           render json: @comment, status: :created
+          UserTimelineJob.perform_now(
+            @comment.user_id,
+            'Post Comment',
+            "Posted a comment on #{@comment.post.title}"
+          )
         else
           render json: @comment.errors, status: :unprocessable_entity
         end
