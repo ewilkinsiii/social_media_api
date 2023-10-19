@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_10_19_044251) do
+ActiveRecord::Schema[7.0].define(version: 2023_10_19_152443) do
   create_table "comments", force: :cascade do |t|
     t.text "message"
     t.bigint "user_id", null: false
@@ -28,6 +28,16 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_19_044251) do
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.index ["user_id"], name: "index_posts_on_user_id"
+  end
+
+  create_table "user_ratings", force: :cascade do |t|
+    t.bigint "rating"
+    t.bigint "user_id", null: false
+    t.bigint "rater_id", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.index ["rater_id"], name: "index_user_ratings_on_rater_id"
+    t.index ["user_id"], name: "index_user_ratings_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -59,4 +69,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_19_044251) do
   add_foreign_key "comments", "posts"
   add_foreign_key "comments", "users"
   add_foreign_key "posts", "users"
+  add_foreign_key "user_ratings", "users"
+  add_foreign_key "user_ratings", "users", column: "rater_id"
 end
