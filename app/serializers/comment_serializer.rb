@@ -1,5 +1,6 @@
 class CommentSerializer < ActiveModel::Serializer
-  attributes :id, :message, :user_id, :post_id
+  include Concerns::RatingMethods
+  attributes :id, :message, :user_id, :post_id, :average_rating
   belongs_to :user
   belongs_to :post
 

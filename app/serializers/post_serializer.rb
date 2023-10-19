@@ -1,5 +1,6 @@
 class PostSerializer < ActiveModel::Serializer
-  attributes :id, :title, :body, :created_at, :updated_at
+  include Concerns::RatingMethods
+  attributes :id, :title, :body, :created_at, :updated_at, :average_rating
   belongs_to :user
   has_many :comments
 
