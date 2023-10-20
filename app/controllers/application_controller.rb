@@ -5,6 +5,6 @@ class ApplicationController < ActionController::API
   protected
 
   def comfigure_permitted_parameters
-    devise_parameter_sanitizer.permit(:sign_up, keys: %i[username name avatar])
+    devise_parameter_sanitizer.permit(:sign_up, keys: %i[username name avatar github_uid github_username github_token])
   end
 end
