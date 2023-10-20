@@ -73,8 +73,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_20_141600) do
     t.datetime "confirmed_at", precision: nil
     t.datetime "confirmation_sent_at", precision: nil
     t.string "unconfirmed_email"
-    t.string "first_name"
-    t.string "last_name"
+    t.string "name"
     t.string "username"
     t.string "avatar"
     t.string "email"
