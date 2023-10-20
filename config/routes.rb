@@ -1,9 +1,12 @@
 require 'sidekiq/web'
 
 Rails.application.routes.draw do
-  authenticate :user do
-    mount Sidekiq::Web => '/sidekiq'
+  namespace :admin do
+    authenticate :user do
+      mount Sidekiq::Web => '/sidekiq'
+    end
   end
+
   mount_devise_token_auth_for 'User', at: 'auth'
 
   namespace :api do
@@ -12,6 +15,9 @@ Rails.application.routes.draw do
       resources :posts do
         resources :comments
       end
+      get 'github/callback', to: 'events#github'
     end
   end
+
+  root to: 'home#index'
 end
