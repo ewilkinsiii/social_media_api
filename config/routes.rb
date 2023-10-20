@@ -1,10 +1,16 @@
 require 'sidekiq/web'
 
 Rails.application.routes.draw do
-  authenticate :user do
-    mount Sidekiq::Web => '/sidekiq'
+  devise_for :admin_users, path: '/admin', path_names: { sign_in: 'login', sign_out: 'logout' }, skip: [:registrations]
+  namespace :admin do
+    authenticate :admin_user do
+      mount Sidekiq::Web => '/sidekiq'
+    end
   end
+
   mount_devise_token_auth_for 'User', at: 'auth'
+
+  get '/auth/github/callback', to: 'auth#github'
 
   namespace :api do
     namespace :v1 do
@@ -14,4 +20,6 @@ Rails.application.routes.draw do
       end
     end
   end
+
+  root to: 'home#index'
 end
