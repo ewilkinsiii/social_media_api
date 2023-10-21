@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :comment do
     message { Faker::Lorem.paragraph(sentence_count: 2) }
-    user { create(:user) }
-    post { create(:post) }
+    user_id { create(:user).id }
+    post_id { create(:post).id }
   end
 end
