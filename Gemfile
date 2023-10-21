@@ -24,6 +24,7 @@ gem "bootsnap", require: false
 
 group :development, :test do
   gem 'annotate', '~> 3.2', '>= 3.0.3'
+  gem "awesome_print", require:"ap"
   gem 'database_cleaner'
   gem 'dotenv-rails', '~> 2.8.1'
   gem 'factory_bot_rails', '~> 6.2'
@@ -38,7 +39,6 @@ group :development, :test do
 end
 
 group :development do
-  gem "awesome_print", require:"ap"
   gem 'better_errors', '~> 2.10'
   gem 'binding_of_caller', '~> 1.0'
   gem 'brakeman', '~> 6.0'
