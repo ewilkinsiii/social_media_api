@@ -1,10 +1,11 @@
 module Api
   module V1
-    class UserRatingsController < ApplicationController
+    class UserRatingsController < Api::V1::ApiController
       before_action :set_user_rating, only: %i[show update]
 
       def index
-        @ratings = UserRating.all
+        @ratings = UserRating.page(params[:page]).per(params[:per_page])
+        render json: @ratings, meta: pagination_dict(@ratings), each_serializer: UserRatingSerializer, include: :user
       end
 
       def show
