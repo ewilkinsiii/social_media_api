@@ -1,10 +1,14 @@
 require 'rails_helper'
 
 RSpec.describe '/api/v1/user_ratings', type: :request do
+  before(:each) do
+    @new_auth_header = authenticate_user
+  end
+
   scenario 'GET /api/v1/user_ratings' do
     user_ratings = create_list(:user_rating, 10)
 
-    get '/api/v1/user_ratings'
+    get '/api/v1/user_ratings', headers: @new_auth_header
     expect(response).to have_http_status(:success)
     json = JSON.parse(response.body).deep_symbolize_keys
     data = json[:data]
@@ -14,7 +18,7 @@ RSpec.describe '/api/v1/user_ratings', type: :request do
   scenario 'GET /api/v1/user_ratings/:id' do
     user_rating = create(:user_rating)
 
-    get "/api/v1/user_ratings/#{user_rating.id}"
+    get "/api/v1/user_ratings/#{user_rating.id}", headers: @new_auth_header
     expect(response).to have_http_status(:success)
 
     json = JSON.parse(response.body).deep_symbolize_keys
@@ -30,9 +34,10 @@ RSpec.describe '/api/v1/user_ratings', type: :request do
 
   scenario 'POST /api/v1/user_ratings' do
     user_rating_attributes = attributes_for(:user_rating)
+    @new_auth_header['Content-Type'] = 'application/json'
 
     post '/api/v1/user_ratings', params: { user_rating: user_rating_attributes }.to_json,
-                                 headers: { 'Content-Type' => 'application/json' }
+                                 headers: @new_auth_header
 
     expect(response).to have_http_status(:success)
 
@@ -50,9 +55,9 @@ RSpec.describe '/api/v1/user_ratings', type: :request do
   scenario 'PATCH /api/v1/user_ratings/:id' do
     user_rating = create(:user_rating)
     new_rating = 5
-
+    @new_auth_header['Content-Type'] = 'application/json'
     patch "/api/v1/user_ratings/#{user_rating.id}", params: { user_rating: { rating: new_rating } }.to_json,
-                                                    headers: { 'Content-Type' => 'application/json' }
+                                                    headers: @new_auth_header
     expect(response).to have_http_status(:success)
 
     json = JSON.parse(response.body).deep_symbolize_keys

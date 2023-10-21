@@ -14,13 +14,13 @@ require 'rails_helper'
 
 RSpec.describe '/api/v1/posts', type: :request do
   before(:each) do
-    @user = create(:user)
+    @new_auth_header = authenticate_user
   end
 
   scenario 'GET /api/v1/posts' do
     posts = create_list(:post, 10, user_id: @user.id)
 
-    get '/api/v1/posts'
+    get '/api/v1/posts', headers: @new_auth_header
     expect(response).to have_http_status(:success)
     json = JSON.parse(response.body).deep_symbolize_keys
     data = json[:data]
@@ -30,7 +30,7 @@ RSpec.describe '/api/v1/posts', type: :request do
   scenario 'GET /api/v1/posts/:id' do
     post = create(:post, user_id: @user.id)
 
-    get "/api/v1/posts/#{post.id}"
+    get "/api/v1/posts/#{post.id}", headers: @new_auth_header
     expect(response).to have_http_status(:success)
 
     json = JSON.parse(response.body).deep_symbolize_keys
@@ -47,8 +47,9 @@ RSpec.describe '/api/v1/posts', type: :request do
 
   scenario 'POST /api/v1/posts' do
     post_attributes = attributes_for(:post, user_id: @user.id)
+    @new_auth_header['Content-Type'] = 'application/json'
 
-    post '/api/v1/posts', params: { post: post_attributes }.to_json, headers: { 'Content-Type' => 'application/json' }
+    post '/api/v1/posts', headers: @new_auth_header, params: { post: post_attributes }.to_json
     expect(response).to have_http_status(:success)
 
     json = JSON.parse(response.body).deep_symbolize_keys
@@ -67,9 +68,10 @@ RSpec.describe '/api/v1/posts', type: :request do
     post = create(:post, user_id: @user.id)
     title = Faker::Lorem.characters(number: 10)
     post_attributes = attributes_for(:post, title: title, user_id: @user.id)
+    @new_auth_header['Content-Type'] = 'application/json'
 
-    put "/api/v1/posts/#{post.id}", params: { post: post_attributes }.to_json,
-                                    headers: { 'Content-Type' => 'application/json' }
+    put "/api/v1/posts/#{post.id}", headers: @new_auth_header, params: { post: post_attributes }.to_json
+
     expect(response).to have_http_status(:success)
 
     json = JSON.parse(response.body).deep_symbolize_keys
@@ -87,7 +89,7 @@ RSpec.describe '/api/v1/posts', type: :request do
   scenario 'DELETE /api/v1/posts/:id' do
     post = create(:post, user_id: @user.id)
 
-    delete "/api/v1/posts/#{post.id}"
+    delete "/api/v1/posts/#{post.id}", headers: @new_auth_header
     expect(response).to have_http_status(:success)
     expect(response.body).to be_empty
   end
