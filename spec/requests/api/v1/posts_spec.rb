@@ -70,7 +70,6 @@ RSpec.describe '/api/v1/posts', type: :request do
 
     put "/api/v1/posts/#{post.id}", params: { post: post_attributes }.to_json,
                                     headers: { 'Content-Type' => 'application/json' }
-    puts ap response.body
     expect(response).to have_http_status(:success)
 
     json = JSON.parse(response.body).deep_symbolize_keys
