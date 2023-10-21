@@ -12,116 +12,83 @@ require 'rails_helper'
 # of tools you can use to make these specs even more expressive, but we're
 # sticking to rails and rspec-rails APIs to keep things simple and stable.
 
-RSpec.describe "/api/v1/posts", type: :request do
-  # This should return the minimal set of attributes required to create a valid
-  # Post. As you add validations to Post, be sure to
-  # adjust the attributes here as well.
-  let(:valid_attributes) {
-    skip("Add a hash of attributes valid for your model")
-  }
-
-  let(:invalid_attributes) {
-    skip("Add a hash of attributes invalid for your model")
-  }
-
-  # This should return the minimal set of values that should be in the headers
-  # in order to pass any filters (e.g. authentication) defined in
-  # PostsController, or in your router and rack
-  # middleware. Be sure to keep this updated too.
-  let(:valid_headers) {
-    {}
-  }
-
-  describe "GET /index" do
-    it "renders a successful response" do
-      Post.create! valid_attributes
-      get api_v1_posts_url, headers: valid_headers, as: :json
-      expect(response).to be_successful
-    end
+RSpec.describe '/api/v1/posts', type: :request do
+  before(:each) do
+    @user = create(:user)
   end
 
-  describe "GET /show" do
-    it "renders a successful response" do
-      post = Post.create! valid_attributes
-      get api_v1_post_url(post), as: :json
-      expect(response).to be_successful
-    end
+  scenario 'GET /api/v1/posts' do
+    posts = create_list(:post, 10, user_id: @user.id)
+
+    get '/api/v1/posts'
+    expect(response).to have_http_status(:success)
+    json = JSON.parse(response.body).deep_symbolize_keys
+    data = json[:data]
+    expect(data.size).to eq(10)
   end
 
-  describe "POST /create" do
-    context "with valid parameters" do
-      it "creates a new Post" do
-        expect {
-          post api_v1_posts_url,
-               params: { api_v1_post: valid_attributes }, headers: valid_headers, as: :json
-        }.to change(Post, :count).by(1)
-      end
+  scenario 'GET /api/v1/posts/:id' do
+    post = create(:post, user_id: @user.id)
 
-      it "renders a JSON response with the new api_v1_post" do
-        post api_v1_posts_url,
-             params: { api_v1_post: valid_attributes }, headers: valid_headers, as: :json
-        expect(response).to have_http_status(:created)
-        expect(response.content_type).to match(a_string_including("application/json"))
-      end
-    end
+    get "/api/v1/posts/#{post.id}"
+    expect(response).to have_http_status(:success)
 
-    context "with invalid parameters" do
-      it "does not create a new Post" do
-        expect {
-          post api_v1_posts_url,
-               params: { api_v1_post: invalid_attributes }, as: :json
-        }.to change(Post, :count).by(0)
-      end
+    json = JSON.parse(response.body).deep_symbolize_keys
+    data = json[:data]
 
-      it "renders a JSON response with errors for the new api_v1_post" do
-        post api_v1_posts_url,
-             params: { api_v1_post: invalid_attributes }, headers: valid_headers, as: :json
-        expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.content_type).to match(a_string_including("application/json"))
-      end
-    end
+    user_relationship = data[:relationships][:user][:data]
+    user_id_from_data = user_relationship[:id].to_i
+
+    expect(data[:id]).to eq(post.id.to_s)
+    expect(data[:attributes][:title]).to eq(post.title)
+    expect(data[:attributes][:body]).to eq(post.body)
+    expect(user_id_from_data).to eq(post.user_id)
   end
 
-  describe "PATCH /update" do
-    context "with valid parameters" do
-      let(:new_attributes) {
-        skip("Add a hash of attributes valid for your model")
-      }
+  scenario 'POST /api/v1/posts' do
+    post_attributes = attributes_for(:post, user_id: @user.id)
 
-      it "updates the requested api_v1_post" do
-        post = Post.create! valid_attributes
-        patch api_v1_post_url(post),
-              params: { api_v1_post: new_attributes }, headers: valid_headers, as: :json
-        post.reload
-        skip("Add assertions for updated state")
-      end
+    post '/api/v1/posts', params: { post: post_attributes }.to_json, headers: { 'Content-Type' => 'application/json' }
+    expect(response).to have_http_status(:success)
 
-      it "renders a JSON response with the api_v1_post" do
-        post = Post.create! valid_attributes
-        patch api_v1_post_url(post),
-              params: { api_v1_post: new_attributes }, headers: valid_headers, as: :json
-        expect(response).to have_http_status(:ok)
-        expect(response.content_type).to match(a_string_including("application/json"))
-      end
-    end
+    json = JSON.parse(response.body).deep_symbolize_keys
+    data = json[:data]
 
-    context "with invalid parameters" do
-      it "renders a JSON response with errors for the api_v1_post" do
-        post = Post.create! valid_attributes
-        patch api_v1_post_url(post),
-              params: { api_v1_post: invalid_attributes }, headers: valid_headers, as: :json
-        expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.content_type).to match(a_string_including("application/json"))
-      end
-    end
+    user_relationship = data[:relationships][:user][:data]
+    user_id_from_data = user_relationship[:id].to_i
+
+    expect(data[:id]).to be_present
+    expect(data[:attributes][:title]).to eq(post_attributes[:title])
+    expect(data[:attributes][:body]).to eq(post_attributes[:body])
+    expect(user_id_from_data).to eq(post_attributes[:user_id])
   end
 
-  describe "DELETE /destroy" do
-    it "destroys the requested api_v1_post" do
-      post = Post.create! valid_attributes
-      expect {
-        delete api_v1_post_url(post), headers: valid_headers, as: :json
-      }.to change(Post, :count).by(-1)
-    end
+  scenario 'PUT /api/v1/posts/:id' do
+    post = create(:post, user_id: @user.id)
+    title = Faker::Lorem.characters(number: 10)
+    post_attributes = attributes_for(:post, title: title, user_id: @user.id)
+
+    put "/api/v1/posts/#{post.id}", params: { post: post_attributes }.to_json,
+                                    headers: { 'Content-Type' => 'application/json' }
+    expect(response).to have_http_status(:success)
+
+    json = JSON.parse(response.body).deep_symbolize_keys
+    data = json[:data]
+
+    user_relationship = data[:relationships][:user][:data]
+    user_id_from_data = user_relationship[:id].to_i
+
+    expect(data[:id]).to eq(post.id.to_s)
+    expect(data[:attributes][:title]).to eq(post_attributes[:title])
+    expect(data[:attributes][:body]).to eq(post_attributes[:body])
+    expect(user_id_from_data).to eq(post_attributes[:user_id])
+  end
+
+  scenario 'DELETE /api/v1/posts/:id' do
+    post = create(:post, user_id: @user.id)
+
+    delete "/api/v1/posts/#{post.id}"
+    expect(response).to have_http_status(:success)
+    expect(response.body).to be_empty
   end
 end

@@ -1,48 +1,56 @@
 require 'rails_helper'
 
 RSpec.describe Post, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
-
-  describe 'associations' do
-    it { should belong_to(:user) }
-    it { should have_many(:comments) }
+  before(:all) do
+    @post = create(:post)
   end
 
-  describe 'validations' do
-    it { should validate_presence_of(:title) }
-    it { should validate_presence_of(:body) }
-    it { should validate_presence_of(:user_id) }
+  it 'is valid with valid attributes' do
+    expect(@post).to be_valid
   end
 
-  describe 'attributes' do
-    it 'should have title and body attributes' do
-      expect(post).to have_attributes(title: post.title, body: post.body)
-    end
+  it 'is not valid without a title' do
+    post2 = build(:post, title: nil)
+    expect(post2).to_not be_valid
   end
 
-  describe 'invalid post' do
-    it 'should be an invalid post due to blank title' do
-      post.title = nil
-      expect(post).to_not be_valid
-    end
-
-    it 'should be an invalid post due to blank body' do
-      post.body = nil
-      expect(post).to_not be_valid
-    end
+  it 'is not valid with a title less than 5 characters' do
+    post2 = build(:post, title: '1234')
+    expect(post2).to_not be_valid
   end
 
-  describe 'scopes' do
-    before do
-      @post1 = create(:post, created_at: 1.day.ago)
-      @post2 = create(:post, created_at: 1.hour.ago)
-      @post3 = create(:post)
-    end
+  it 'is not valid without a body' do
+    post2 = build(:post, body: nil)
+    expect(post2).to_not be_valid
+  end
 
-    describe 'posts_by_created_at' do
-      it 'should return posts in the correct order' do
-        expect(Post.posts_by_created_at).to eq([@post3, @post2, @post1])
-      end
-    end
+  it 'is not valid with a body less than 5 characters' do
+    post2 = build(:post, body: '1234')
+    expect(post2).to_not be_valid
+  end
+
+  it 'is not valid with a body more than 1000 characters' do
+    post2 = build(:post, body: 'a' * 1001)
+    expect(post2).to_not be_valid
+  end
+
+  it 'is not valid without a user' do
+    post2 = build(:post, user: nil)
+    expect(post2).to_not be_valid
+  end
+
+  it 'is not valid without a user_id' do
+    post2 = build(:post, user_id: nil)
+    expect(post2).to_not be_valid
+  end
+
+  it 'is not valid with a user_id that does not exist' do
+    post2 = build(:post, user_id: 100)
+    expect(post2).to_not be_valid
+  end
+
+  it 'is not valid with a user_id that is not an integer' do
+    post2 = build(:post, user_id: 'a')
+    expect(post2).to_not be_valid
   end
 end

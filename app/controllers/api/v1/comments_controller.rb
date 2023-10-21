@@ -28,8 +28,25 @@ module Api
         end
       end
 
+      def update
+        if @comment.update(comment_params)
+          render json: @comment, status: :ok
+        else
+          render json: @comment.errors, status: :unprocessable_entity
+        end
+      end
+
       def destroy
+        title = @comment.post.title
+        user_id = @comment.user_id
+
         @comment.destroy
+
+        UserTimelineJob.perform_now(
+          user_id,
+          'Deleted Comment',
+          "Deleted comment on the post #{title}"
+        )
       end
 
       private

@@ -24,6 +24,7 @@ gem "bootsnap", require: false
 
 group :development, :test do
   gem 'annotate', '~> 3.2', '>= 3.0.3'
+  gem 'database_cleaner'
   gem 'dotenv-rails', '~> 2.8.1'
   gem 'factory_bot_rails', '~> 6.2'
   gem 'faker', '~> 3.2'
@@ -31,11 +32,13 @@ group :development, :test do
   gem 'parallel_tests', '~> 4.3'
   gem 'pry-byebug', '~> 3.9', platform: :mri
   gem 'pry-rails', '~> 0.3.9'
+  gem 'shoulda-matchers', '~> 5.3'
   gem 'rspec_api_documentation', '~> 6.1.0'
   gem 'rspec-rails', '~> 6.0'
 end
 
 group :development do
+  gem "awesome_print", require:"ap"
   gem 'better_errors', '~> 2.10'
   gem 'binding_of_caller', '~> 1.0'
   gem 'brakeman', '~> 6.0'
@@ -55,7 +58,6 @@ end
 
 group :test do
   gem 'prosopite', '~> 1.4.1'
-  gem 'shoulda-matchers', '~> 5.3'
   gem 'simplecov', '~> 0.22.0', require: false
   gem 'webmock', '~> 3.19'
 end
